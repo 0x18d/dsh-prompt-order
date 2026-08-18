@@ -1,0 +1,11 @@
+# dsh-prompt-order bundle patch：把自身注册进 DSH profile。
+# 配置 order 可覆盖默认排序；留空则使用代码内 DEFAULT_ORDER。
+- insert:
+    - id: prompt-order
+      name: dsh-prompt-order
+      config:
+        order:
+          - agent-instructions
+          - skill-catalog
+          - mnemon
+          - user
