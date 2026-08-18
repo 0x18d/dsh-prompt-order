@@ -38,10 +38,10 @@ Each injected message has a `source` object. The plugin uses `source.kind` (or `
 
 **Method 1: DSH session logs / 查看会话日志**
 
-Plugin-injected messages are stored as `user/message` events with a `source` field. Search the session logs:
+Plugin-injected messages are stored as `user/message` events with a `source` field. Search the session logs (DSH uses zstd-compressed JSONL):
 
 ```bash
-grep -h '"source"' ~/.dsh/sessions/*/*.jsonl | head
+find ~/.dsh/sessions -name '*.jsonl.zstd' -exec zstdcat {} \; 2>/dev/null | grep '"source"' | head
 ```
 
 You should see entries like:
