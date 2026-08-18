@@ -30,6 +30,55 @@ dev_build_plugin
 dev_inject_plugin
 ```
 
+## How to inspect source.kind / 如何查看 source.kind
+
+Each injected message has a `source` object. The plugin uses `source.kind` (or `source.plugin === 'dsh-mnemon'`) as the sort key.
+
+每条注入消息都带有一个 `source` 对象，插件用它作为排序键。
+
+**Method 1: DSH session logs / 查看会话日志**
+
+Plugin-injected messages are stored as `user/message` events with a `source` field. Search the session logs:
+
+```bash
+grep -h '"source"' ~/.dsh/sessions/*/*.jsonl | head
+```
+
+You should see entries like:
+
+```json
+{"kind":"plugin","plugin":"dsh-mnemon","form":"instructions"}
+{"kind":"plugin","plugin":"hindsight","form":"recall"}
+{"kind":"user"}
+```
+
+**Method 2: Temporary debug log / 临时调试日志**
+
+Add a log in `src/index.ts` before sorting:
+
+```ts
+for (const message of decision.messages ?? []) {
+  console.log('[dsh-prompt-order]', JSON.stringify(message.source))
+}
+```
+
+Then rebuild and inject:
+
+```bash
+dev_build_plugin
+dev_inject_plugin
+```
+
+Watch the DSH process output.
+
+**Method 3: Read plugin source / 查看插件源码**
+
+Each injecting plugin defines its own `source` shape, e.g.:
+
+- dsh-mnemon: `{ kind: 'plugin', plugin: 'dsh-mnemon', form: 'instructions' }`
+- Hindsight: `{ kind: 'plugin', plugin: 'hindsight', form: 'recall' }`
+- real user message: `{ kind: 'user' }`
+
 ## Custom order / 自定义顺序
 
 Add or edit the entry in `~/.dsh/profiles/web/cordis.patch.yml`:
